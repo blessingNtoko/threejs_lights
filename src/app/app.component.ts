@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as dat from 'dat.gui';
+import { ColorGUIHelper } from './ColorGuiHelper/guiHelper.js';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +34,7 @@ export class AppComponent implements OnInit{
 
     const planeSize = 40;
 
-    const texture = this.textureLoader.load('./assets/checker.png');
+    const texture = this.textureLoader.load('../assets/checker.png');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.magFilter = THREE.NearestFilter;
@@ -67,16 +68,44 @@ export class AppComponent implements OnInit{
     const planeGeo = new THREE.PlaneBufferGeometry(planeSize, planeSize);
     const planeMat = new THREE.MeshPhongMaterial({
       map: texture,
+      // color: 'blue',
       side: THREE.DoubleSide
     });
     const planeMesh = new THREE.Mesh(planeGeo, planeMat);
     planeMesh.rotation.x = Math.PI * -.5;
     this.scene.add(planeMesh);
 
-    const color = 0xFFFFFF;
+    // =================================================================== Lights =================================================================
+
+    // const color = 0xB1E1FF
+    // const intensity = 1;
+    // const light = new THREE.AmbientLight(color, intensity);
+    // this.scene.add(light);
+
+    // const skyColor = 0xB1E1FF
+    // const groundColor = 0xB97A20;
+    // const intensity = 1;
+    // const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+    // this.scene.add(light);
+
+    const color = 0xFFFFFF
     const intensity = 1;
-    const light = new THREE.AmbientLight(color, intensity);
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(0, 10, 0);
+    light.target.position.set(-5, 0, 0);
     this.scene.add(light);
+    this.scene.add(light.target);
+
+    // =================================================================== dat.GUI =================================================================
+
+    const gui = new dat.GUI();
+    gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+    gui.add(light, 'intensity', 0, 2, 0.1);
+    gui.add(light.target.position, 'x', -10, 10);
+    gui.add(light.target.position, 'y', -10, 10);
+    gui.add(light.target.position, 'z', 0, 10);
+
+    // =================================================================== Animate =================================================================
 
     const animate = () => {
 
