@@ -88,22 +88,36 @@ export class AppComponent implements OnInit{
     // const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
     // this.scene.add(light);
 
+    // const color = 0xFFFFFF
+    // const intensity = 1;
+    // const light = new THREE.DirectionalLight(color, intensity);
+    // light.position.set(0, 10, 0);
+    // light.target.position.set(-5, 0, 0);
+    // const helper = new THREE.DirectionalLightHelper(light);
+    // this.scene.add(light);
+    // this.scene.add(light.target);
+    // this.scene.add(helper);
+
     const color = 0xFFFFFF
     const intensity = 1;
-    const light = new THREE.DirectionalLight(color, intensity);
+    const light = new THREE.PointLight(color, intensity);
     light.position.set(0, 10, 0);
-    light.target.position.set(-5, 0, 0);
+    const helper = new THREE.PointLightHelper(light);
     this.scene.add(light);
-    this.scene.add(light.target);
+    this.scene.add(helper);
+
+    const updateLight = () => {
+      helper.update();
+    };
 
     // =================================================================== dat.GUI =================================================================
 
     const gui = new dat.GUI();
     gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
     gui.add(light, 'intensity', 0, 2, 0.1);
-    gui.add(light.target.position, 'x', -10, 10);
-    gui.add(light.target.position, 'y', -10, 10);
-    gui.add(light.target.position, 'z', 0, 10);
+    gui.add(light, 'distance', 0, 40).onChange(updateLight);
+
+    this.makeXYZGUI(gui, light.position, 'position', updateLight);
 
     // =================================================================== Animate =================================================================
 
@@ -116,5 +130,13 @@ export class AppComponent implements OnInit{
     }
     requestAnimationFrame(animate);
 
+  }
+
+  private makeXYZGUI(gui, vector3, name, onChangeFn) {
+    const folder = gui.addFolder(name);
+    folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
+    folder.add(vector3, 'y', 0, 10).onChange(onChangeFn);
+    folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
+    folder.open();
   }
 }
