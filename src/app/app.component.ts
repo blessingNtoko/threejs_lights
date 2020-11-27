@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 import * as dat from 'dat.gui';
 import { ColorGUIHelper } from './Helpers/helpers.js';
 import { DegRadHelper } from './Helpers/helpers.js';
@@ -27,6 +29,7 @@ export class AppComponent implements OnInit{
   private init() {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
+    RectAreaLightUniformsLib.init(); // rectangular light will look weird if you forget this
 
     this.controls.target.set(0, 5, 0);
     this.controls.update();
@@ -45,7 +48,7 @@ export class AppComponent implements OnInit{
     {
       const cubeSize = 4;
       const cubeGeo = new THREE.BoxBufferGeometry(cubeSize, cubeSize, cubeSize);
-      const cubeMat = new THREE.MeshPhongMaterial({
+      const cubeMat = new THREE.MeshStandardMaterial({
         color: '#8ac'
       });
       const mesh = new THREE.Mesh(cubeGeo, cubeMat);
@@ -58,7 +61,7 @@ export class AppComponent implements OnInit{
       const sphereWidthDiv = 32;
       const sphereHeightDiv = 16;
       const sphereGeo = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDiv, sphereHeightDiv);
-      const sphereMat = new THREE.MeshPhongMaterial({
+      const sphereMat = new THREE.MeshStandardMaterial({
         color: '#ca8'
       });
       const mesh = new THREE.Mesh(sphereGeo, sphereMat);
@@ -67,7 +70,7 @@ export class AppComponent implements OnInit{
     }
 
     const planeGeo = new THREE.PlaneBufferGeometry(planeSize, planeSize);
-    const planeMat = new THREE.MeshPhongMaterial({
+    const planeMat = new THREE.MeshStandardMaterial({
       map: texture,
       // color: 'blue',
       side: THREE.DoubleSide
@@ -127,6 +130,8 @@ export class AppComponent implements OnInit{
     gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
     gui.add(light, 'intensity', 0, 2, 0.1);
     gui.add(light, 'distance', 0, 40).onChange(updateLight);
+    gui.add(new DegRadHelper(light, 'angle'), 'value', 0, 90).onChange(updateLight);
+    gui.add(light, 'penumbra', 0, 1, .01);
 
     this.makeXYZGUI(gui, light.position, 'position', updateLight);
     this.makeXYZGUI(gui, light.target.position, 'target', updateLight);
@@ -147,7 +152,7 @@ export class AppComponent implements OnInit{
   private makeXYZGUI(gui, vector3, name, onChangeFn) {
     const folder = gui.addFolder(name);
     folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
-    folder.add(vector3, 'y', 0, 10).onChange(onChangeFn);
+    folder.add(vector3, 'y', 0, 20).onChange(onChangeFn);
     folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
     folder.open();
   }
