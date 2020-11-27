@@ -13,7 +13,7 @@ export class AppComponent implements OnInit{
   public renderer = new THREE.WebGLRenderer({
     antialias: true
   });
-  public camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, .1, 1000);
+  public camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 100);
   public controls = new OrbitControls(this.camera, this.renderer.domElement);
 
   ngOnInit(){
@@ -25,6 +25,8 @@ export class AppComponent implements OnInit{
     document.body.appendChild(this.renderer.domElement);
 
     this.controls.update();
+
+    this.camera.position.set(0, 10, 20);
 
   }
 }
