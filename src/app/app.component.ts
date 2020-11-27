@@ -110,15 +110,27 @@ export class AppComponent implements OnInit{
     // this.scene.add(light);
     // this.scene.add(helper);
 
+    // const color = 0xFFFFFF
+    // const intensity = 1;
+    // const light = new THREE.SpotLight(color, intensity);
+    // light.position.set(0, 20, 0);
+    // light.target.position.set(-5, 0, 0);
+    // const helper = new THREE.SpotLightHelper(light);
+    // this.scene.add(light);
+    // this.scene.add(light.target);
+    // this.scene.add(helper);
+
     const color = 0xFFFFFF
-    const intensity = 1;
-    const light = new THREE.SpotLight(color, intensity);
-    light.position.set(0, 20, 0);
-    light.target.position.set(-5, 0, 0);
-    const helper = new THREE.SpotLightHelper(light);
+    const intensity = 5;
+    const width = 12;
+    const height = 4;
+    const light = new THREE.RectAreaLight(color, intensity, width, height);
+    light.position.set(0, 10, 0);
+    light.rotation.x = THREE.MathUtils.degToRad(-90);
     this.scene.add(light);
-    this.scene.add(light.target);
-    this.scene.add(helper);
+
+    const helper = new RectAreaLightHelper(light);
+    light.add(helper); // rectAreaHelper must be child of light and not scene
 
     const updateLight = () => {
       helper.update();
@@ -128,13 +140,14 @@ export class AppComponent implements OnInit{
 
     const gui = new dat.GUI();
     gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
-    gui.add(light, 'intensity', 0, 2, 0.1);
-    gui.add(light, 'distance', 0, 40).onChange(updateLight);
-    gui.add(new DegRadHelper(light, 'angle'), 'value', 0, 90).onChange(updateLight);
-    gui.add(light, 'penumbra', 0, 1, .01);
+    gui.add(light, 'intensity', 0, 10, 0.01);
+    gui.add(light, 'width', 0, 20).onChange(updateLight);
+    gui.add(light, 'height', 0, 20).onChange(updateLight);
+    gui.add(new DegRadHelper(light.rotation, 'x'), 'value', -180, 180).name('x rotation').onChange(updateLight);
+    gui.add(new DegRadHelper(light.rotation, 'y'), 'value', -180, 180).name('y rotation').onChange(updateLight);
+    gui.add(new DegRadHelper(light.rotation, 'z'), 'value', -180, 180).name('z rotation').onChange(updateLight);
 
     this.makeXYZGUI(gui, light.position, 'position', updateLight);
-    this.makeXYZGUI(gui, light.target.position, 'target', updateLight);
 
     // =================================================================== Animate =================================================================
 
