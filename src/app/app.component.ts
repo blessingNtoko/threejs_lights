@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as dat from 'dat.gui';
-import { ColorGUIHelper } from './ColorGuiHelper/guiHelper.js';
+import { ColorGUIHelper } from './Helpers/helpers.js';
+import { DegRadHelper } from './Helpers/helpers.js';
 
 @Component({
   selector: 'app-root',
@@ -98,12 +99,22 @@ export class AppComponent implements OnInit{
     // this.scene.add(light.target);
     // this.scene.add(helper);
 
+    // const color = 0xFFFFFF
+    // const intensity = 1;
+    // const light = new THREE.PointLight(color, intensity);
+    // light.position.set(0, 10, 0);
+    // const helper = new THREE.PointLightHelper(light);
+    // this.scene.add(light);
+    // this.scene.add(helper);
+
     const color = 0xFFFFFF
     const intensity = 1;
-    const light = new THREE.PointLight(color, intensity);
-    light.position.set(0, 10, 0);
-    const helper = new THREE.PointLightHelper(light);
+    const light = new THREE.SpotLight(color, intensity);
+    light.position.set(0, 20, 0);
+    light.target.position.set(-5, 0, 0);
+    const helper = new THREE.SpotLightHelper(light);
     this.scene.add(light);
+    this.scene.add(light.target);
     this.scene.add(helper);
 
     const updateLight = () => {
@@ -118,6 +129,7 @@ export class AppComponent implements OnInit{
     gui.add(light, 'distance', 0, 40).onChange(updateLight);
 
     this.makeXYZGUI(gui, light.position, 'position', updateLight);
+    this.makeXYZGUI(gui, light.target.position, 'target', updateLight);
 
     // =================================================================== Animate =================================================================
 
