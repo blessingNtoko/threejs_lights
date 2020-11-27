@@ -30,7 +30,7 @@ export class AppComponent implements OnInit{
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.physicallyCorrectLights = true;
     document.body.appendChild(this.renderer.domElement);
-    RectAreaLightUniformsLib.init(); // rectangular light will look weird if you forget this
+    // RectAreaLightUniformsLib.init(); // rectangular light will look weird if you forget this
 
     this.controls.target.set(0, 5, 0);
     this.controls.update();
