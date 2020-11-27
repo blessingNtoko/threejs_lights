@@ -28,6 +28,7 @@ export class AppComponent implements OnInit{
 
   private init() {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.physicallyCorrectLights = true;
     document.body.appendChild(this.renderer.domElement);
     RectAreaLightUniformsLib.init(); // rectangular light will look weird if you forget this
 
@@ -38,7 +39,7 @@ export class AppComponent implements OnInit{
 
     const planeSize = 40;
 
-    const texture = this.textureLoader.load('../assets/checker.png');
+    const texture = this.textureLoader.load('../assets/textures/grass.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.magFilter = THREE.NearestFilter;
@@ -102,13 +103,16 @@ export class AppComponent implements OnInit{
     // this.scene.add(light.target);
     // this.scene.add(helper);
 
-    // const color = 0xFFFFFF
-    // const intensity = 1;
-    // const light = new THREE.PointLight(color, intensity);
-    // light.position.set(0, 10, 0);
-    // const helper = new THREE.PointLightHelper(light);
-    // this.scene.add(light);
-    // this.scene.add(helper);
+    const color = 0xFFFFFF
+    const intensity = 1;
+    const light = new THREE.PointLight(color, intensity);
+    light.position.set(0, 10, 0);
+    light.power = 800;
+    light.decay = 2;
+    light.distance = Infinity;
+    const helper = new THREE.PointLightHelper(light);
+    this.scene.add(light);
+    this.scene.add(helper);
 
     // const color = 0xFFFFFF
     // const intensity = 1;
@@ -120,17 +124,17 @@ export class AppComponent implements OnInit{
     // this.scene.add(light.target);
     // this.scene.add(helper);
 
-    const color = 0xFFFFFF
-    const intensity = 5;
-    const width = 12;
-    const height = 4;
-    const light = new THREE.RectAreaLight(color, intensity, width, height);
-    light.position.set(0, 10, 0);
-    light.rotation.x = THREE.MathUtils.degToRad(-90);
-    this.scene.add(light);
+    // const color = 0xFFFFFF
+    // const intensity = 5;
+    // const width = 12;
+    // const height = 4;
+    // const light = new THREE.RectAreaLight(color, intensity, width, height);
+    // light.position.set(0, 10, 0);
+    // light.rotation.x = THREE.MathUtils.degToRad(-90);
+    // this.scene.add(light);
 
-    const helper = new RectAreaLightHelper(light);
-    light.add(helper); // rectAreaHelper must be child of light and not scene
+    // const helper = new RectAreaLightHelper(light);
+    // light.add(helper); // rectAreaHelper must be child of light and not scene
 
     const updateLight = () => {
       helper.update();
@@ -140,12 +144,8 @@ export class AppComponent implements OnInit{
 
     const gui = new dat.GUI();
     gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
-    gui.add(light, 'intensity', 0, 10, 0.01);
-    gui.add(light, 'width', 0, 20).onChange(updateLight);
-    gui.add(light, 'height', 0, 20).onChange(updateLight);
-    gui.add(new DegRadHelper(light.rotation, 'x'), 'value', -180, 180).name('x rotation').onChange(updateLight);
-    gui.add(new DegRadHelper(light.rotation, 'y'), 'value', -180, 180).name('y rotation').onChange(updateLight);
-    gui.add(new DegRadHelper(light.rotation, 'z'), 'value', -180, 180).name('z rotation').onChange(updateLight);
+    gui.add(light, 'decay', 0, 4, 0.01);
+    gui.add(light, 'power', 0, 2000);
 
     this.makeXYZGUI(gui, light.position, 'position', updateLight);
 
